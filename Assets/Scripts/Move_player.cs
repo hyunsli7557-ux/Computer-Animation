@@ -48,7 +48,7 @@ public class Move_player : MonoBehaviour
             moveInput = 1f;
         }
 
-        //Rigidbody 2D의 속도 옵션을 적용한 자연스러운 움직임 구
+        //Rigidbody 2D의 속도 옵션을 적용한 자연스러운 움직임
         rd.linearVelocity = new Vector2(moveInput * moveSpeed, rd.linearVelocity.y);
 
         //방향전환

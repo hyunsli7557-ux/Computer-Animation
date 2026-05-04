@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-
     [Header("Jump Settings")]
     public float jumpHeight = 2f;
     public float jumpDuration = 0.5f;
@@ -12,12 +10,10 @@ public class PlayerController : MonoBehaviour
     private bool isJumping = false;
     private float jumpTimer = 0f;
     private Vector3 startPosition;
-    private bool isMovingRight = false;
 
     [Header("Animation Controller")]
     public RuntimeAnimatorController idleController;
     public RuntimeAnimatorController jumpController;
-    public RuntimeAnimatorController runController;
 
     private Animator animator;
 
@@ -30,49 +26,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Vector2 moveDirection = Vector2.zero;
 
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            moveDirection.x -= 1f;
-            isMovingRight = false; // 왼쪽 이동
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            moveDirection.x += 1f;
-            isMovingRight = true; // 오른쪽 이동
-        }
-
-        // 이동 방향이 바뀌면 스프라이트 뒤집기
-        if (moveDirection.x > 0f)
-        {
-            spriteRenderer.flipX = false; // 오른쪽 바라봄
-        }
-        else if (moveDirection.x < 0f)
-        {
-            spriteRenderer.flipX = true; // 왼쪽 바라봄
-        }
-
-        if (!isJumping)
-        {
-            if (moveDirection.x != 0f)
-            {
-                animator.runtimeAnimatorController = runController;
-            }
-            else
-            {
-                animator.runtimeAnimatorController = idleController;
-            }
-        }   
-
-        moveDirection = moveDirection.normalized;
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
-
+        // 점프 시작
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
             StartJump();
         }
 
+        // 점프 중이면 계속 업데이트
         if (isJumping)
         {
             UpdateJump();
@@ -95,16 +56,16 @@ public class PlayerController : MonoBehaviour
 
         if (progress >= 1f)
         {
+            // 착지
             transform.position = new Vector3(transform.position.x, startPosition.y, transform.position.z);
             isJumping = false;
             animator.runtimeAnimatorController = idleController;
         }
         else
         {
+            // 사인 곡선을 이용한 점프 높이
             float height = Mathf.Sin(progress * Mathf.PI) * jumpHeight;
-            transform.position = new Vector3(transform.position.x, startPosition.y + height, transform.position.z);            
+            transform.position = new Vector3(transform.position.x, startPosition.y + height, transform.position.z);
         }
     }
 }
-
-
